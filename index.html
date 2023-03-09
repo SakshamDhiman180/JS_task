@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<script>
+
+ getText("students.json");
+
+ async function getText(file) {
+   let myObject = await fetch(file);
+   let myText = await myObject.json();
+
+const maxMarks = 50;
+
+const filtStudents = myText.filter(s => {
+const TMarks = s.marks.reduce((acc, m) => acc + m.marks, 0);
+return TMarks >= maxMarks * 0.33;
+});
+
+const sortStudents = filtStudents.sort((a, b) => {
+const TMarksA = a.marks.reduce((acc, m) => acc + m.marks, 0);
+const TMarksB = b.marks.reduce((acc, m) => acc + m.marks, 0);
+return TMarksB - TMarksA;
+});
+
+const topThreeStudents = sortStudents.slice(0, 3);
+
+topThreeStudents.forEach(s => {
+const tMarks = s.marks.reduce((acc, m) => acc + m.marks, 0);
+console.log(s.name.first, s.name.last, tMarks);
+});
+
+ 
+////*********************/////////////2nd question\\\\\\\\\\\\\\**********************\
+
+function getResultOfClass(className) {
+const classStudents = myText.filter(s => s.class === className);
+const classStudentsTotalMarks = classStudents.map(s => {
+const totalMarks = s.marks.reduce((sum, m) => sum + m.marks, 0);
+return {
+...s,
+totalMarks
+}
+});
+const classStudentsSortedByMarks = classStudentsTotalMarks.sort((a, b) => b.totalMarks - a.totalMarks);
+const classRankings = classStudentsSortedByMarks.map((s, index) => {
+const subjectResults = s.marks.map(m => {
+const passOrFail = m.marks >= 35 ? 'Pass' : 'Fail';
+return `${m.subject}(${m.marks}) <${passOrFail}>`;
+}).join(', ');
+return `${s.name.first} ${s.name.last} obtained ${s.totalMarks} marks [${subjectResults}] got ${index + 1}${index === 0 ? 'st' : index === 1 ? 'nd' : index === 2 ? 'rd' : 'th'} Position`;
+});
+return classRankings;
+}
+
+const tentha = getResultOfClass('tenth-a');
+console.log(tentha);
+
+ }
+
+</script>
+
+</html>
+
